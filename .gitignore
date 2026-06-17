@@ -1,0 +1,75 @@
+# Build folders
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+
+# NuGet
+packages/
+*.nupkg
+
+# Logs
+*.log
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+# Android
+*.apk
+*.aab
+
+# Generated files
+Generated Files/
+
+# MAUI build folders
+**/bin/
+**/obj/
+
+# Test results
+TestResults/
+
+# Coverage reports
+coverage/
+*.coverage
+
+# Local configuration
+local.properties
+
+# Publish output
+publish/
+
+# Temporary files
+tmp/
+temp/
+
+# Backup files
+*.bak
+*.tmp
+
+# Azure publish profiles (if they contain secrets)
+*.publishsettings
+
+# User-specific Visual Studio files
+*.rsuser
+
+# JetBrains Rider
+.idea/
+
+# ReSharper
+_ReSharper*/
+*.DotSettings.user
