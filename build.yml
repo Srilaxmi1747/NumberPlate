@@ -1,0 +1,86 @@
+name: Build Android App
+ 
+on:
+  push:
+    branches:
+      - master
+ 
+jobs:
+  build:
+    runs-on: windows-latest
+ 
+    steps:
+ 
+    - name: Checkout Code
+      uses: actions/checkout@v4
+ 
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+ 
+    - name: Install MAUI
+      run: |
+        dotnet workload install maui
+        dotnet workload install android
+ 
+    # Decode Android Keystore
+    - name: Decode Android Keystore
+      shell: pwsh
+      run: |
+        [IO.File]::WriteAllBytes(
+          "company-release.jks",
+          [Convert]::FromBase64String("${{ secrets.ANDROID_KEYSTORE }}")
+        )
+ 
+    - name: Clean
+      run: dotnet clean NumberPlate.csproj
+ 
+    - name: Restore
+      run: dotnet restore NumberPlate.csproj
+ 
+    - name: Build Android
+      run: dotnet build NumberPlate.csproj -f net9.0-android -c Release
+ 
+    - name: Publish Signed APK
+      run: >
+        dotnet publish NumberPlate.csproj
+        -f net9.0-android
+        -c Release
+        /p:AndroidKeyStore=true
+        /p:AndroidSigningKeyStore=company-release.jks
+        /p:AndroidSigningStorePass=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        /p:AndroidSigningKeyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
+        /p:AndroidSigningKeyPass=${{ secrets.ANDROID_KEY_PASSWORD }}
+ 
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: AndroidAPK
+        path: |
+          **/*.apk
+ 
+    # Install Firebase CLI
+    - name: Install Firebase CLI
+      run: npm install -g firebase-tools
+ 
+    # Create Firebase Service Account File
+    - name: Create Firebase Credentials
+      shell: pwsh
+      run: |
+        @'
+        ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        '@ | Out-File firebase-service-account.json
+ 
+    # Upload APK to Firebase App Distribution
+    - name: Distribute APK to Firebase
+      shell: pwsh
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: firebase-service-account.json
+      run: |
+        $apk = Get-ChildItem -Recurse -Filter *.apk | Select-Object -First 1
+ 
+        firebase appdistribution:distribute `
+          $apk.FullName `
+          --app "${{ secrets.FIREBASE_APP_ID }}" `
+          --groups "testing-team"
