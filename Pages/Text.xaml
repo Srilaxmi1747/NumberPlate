@@ -6,8 +6,8 @@
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="12">
 
-            <Label Text="Vehicle Plate Recognition"
-                FontSize="22"
+            <Label Text="Vehicle Plate Recognition System"
+                FontSize="24"
                 FontAttributes="Bold"
                 HorizontalOptions="Center"
                 Margin="0,0,0,10"/>
@@ -23,10 +23,10 @@
             <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                 <Button x:Name="CaptureButton"
                      Grid.Column="0"
-                     Text=" Take Photo"
+                     Text=" Take Picture"
                      Clicked="OnCapturePhotoClicked"
                      BackgroundColor="#2196F3"
-                     TextColor="White"/>
+                     TextColor="Yellow"/>
                 <Button x:Name="PickButton"
                      Grid.Column="1"
                      Text=" Gallery"
